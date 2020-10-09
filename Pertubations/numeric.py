@@ -43,3 +43,16 @@ class Scale(Pertubation):
 
     def name(self):
         return 'Scale Column ' + str(self.num_column) + ' with ' + str(self.scaler)
+
+# Swapp Columns
+class NoPertubation(Pertubation):
+
+    def __init__(self, X_train):
+        self.X_train_copy = (X_train)
+
+    def perturbe(self):
+        return self.X_train_copy
+
+
+    def name(self):
+        return 'NO Petrubation!'

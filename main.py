@@ -1,19 +1,26 @@
 import numpy as np
 
 from Data.read_heart import heart
-from Pertubations.numeric import Column, Scale
-from PPP import PPP
+from Pertubations.numeric import Column, Scale, NoPertubation
+from PPP_class import PPP
+from Bayesian_Optimization.bayesian_optimization_class import BO
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 from sklearn import linear_model
+import pickle
+import sys
+import os
+
+SAVE = False
 
 # Read Heart data
 data = heart()
 X_train, X_test, y_train, y_test = data.get_train_test()
 
 # Classifier
-classifier = KNeighborsClassifier(n_neighbors=5)
+hyperparameter = 5
+classifier = KNeighborsClassifier(n_neighbors=hyperparameter)
 classifier.fit(X_train, y_train)
 
 # Predictor
@@ -23,26 +30,52 @@ predictor = GaussianProcessRegressor(kernel = kernel)
 # PPP
 ppp = PPP(classifier, predictor)
 
-print('Classifier')
-print('Score = ', classifier.score(X_train, y_train))
+# Config
+MODEL_PATH = 'models/'
 
-print()
-print('No Pertubation!')
-ppp.fit_ppp(X_train, y_train)
-print('Score = ', ppp.score)
+DEFAULT_PERTUBATION = [('No_Perturbation', NoPertubation(X_train)),
+                       ('Column', Column(X_train, data.numerical_column, data.categorical_column)),
+                       ('Scale', Scale(X_train, data.numerical_column, data.categorical_column))]
 
-print()
-print('Column Pertubation to X_train!')
-pert = Column(X_train, data.numerical_column, data.categorical_column)
-X_train_perturbed = pert.perturbe()
-print(pert.name())
-ppp.fit_ppp(X_train_perturbed, y_train)
-print('Score = ', ppp.score)
+for cnt, pertubation in enumerate(DEFAULT_PERTUBATION):
 
-print()
-print('Scaler Pertubation to X_train!')
-pert = Scale(X_train, data.numerical_column, data.categorical_column)
-X_train_perturbed = pert.perturbe()
-print(pert.name())
-ppp.fit_ppp(X_train_perturbed, y_train)
-print('Score = ', ppp.score)
+    print(cnt, pertubation[0], pertubation[1])
+
+    X_train_perturbed = pertubation[1].perturbe()
+
+    ppp.fit_ppp(X_train_perturbed, y_train, hyperparameter)
+
+    # ToDo: FIT BAYESIAN OPTIMIZATION GET HP
+
+    if SAVE:
+        # Save Folder
+        MODEL_PATH_TEMP = MODEL_PATH + str(cnt) + '/'
+        os.makedirs(MODEL_PATH_TEMP)
+
+        # Save Classifier, Predictor and Meta_Features
+        pickle.dump(classifier, open(MODEL_PATH_TEMP + 'classifier.pickle', 'wb'))
+        pickle.dump(ppp.predictor, open(MODEL_PATH_TEMP + 'predictor.pickle', 'wb'))
+        pickle.dump(ppp.meta_features, open(MODEL_PATH_TEMP + 'List_predictor.pickle', 'wb'))
+
+        ## WRITE INFORMATION ABOUT CURRENT MODEL
+        file = open(MODEL_PATH_TEMP + "Information.txt", "w+")
+
+        file.write('Model number: ' + str(cnt) + '\n\n')
+        file.write('Name: ' + str(pertubation[0])+ '\n\n')
+        file.write('Pertubation: ' + str(pertubation[1].name())+ '\n\n')
+        file.write('List for Predictor: ' + str(ppp.meta_features) + '\n\n' )
+        mu, cov = ppp.predictor.predict(ppp.meta_features, return_cov=True)
+        file.write('Mean: ' + str(mu) + '\n\n' )
+        file.write('Covariance: ' + str(cov) + '\n\n')
+
+        file.close()
+
+    print(pertubation[1].name())
+
+    print('Score = ', ppp.meta_scores)
+    print()
+
+    ##ToDo: TRAIN CLASSIFIER with new HP
+    #classifier = KNeighborsClassifier(n_neighbors=)
+    #classifier
+    #ppp.classifier = classifier
