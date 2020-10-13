@@ -28,3 +28,17 @@ class PPP:
         self.meta_features = [np.insert(self.meta_features[0], 0, hyperparameter)]
 
         self.predictor.fit(self.meta_features, self.meta_scores)
+
+    def predict_ppp(self, X_perturbed, hyperparameter):
+        predictions = self.classifier.predict_proba(X_perturbed)
+        meta_features = self.compute_ppp_features(predictions)
+
+        meta_features = [np.insert(meta_features, 0, hyperparameter)]
+
+        temp = self.predictor.predict(meta_features, return_std=True)
+
+        dict = {'mu' : temp[0],
+                'sigma' : temp[1]
+                }
+
+        return dict
