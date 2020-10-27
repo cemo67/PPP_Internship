@@ -12,7 +12,7 @@ toy_data = toy_data_class()
 X_train, X_test, y_train, y_test = toy_data(toy_data.blobs())
 
 # Config
-SAVE = True
+SAVE = False
 MODEL_PATH = 'models/'
 
 DEFAULT_FRACTION = [0.1, 0.3]
@@ -78,18 +78,3 @@ for name, pertubation in DEFAULT_PERTUBATION:
 
 
 print('END')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
