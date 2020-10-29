@@ -4,7 +4,7 @@ from Data.read_heart import heart
 from Pertubations.numeric import Column, Scale
 import sys
 
-class PPP:
+class PPP_class:
 
     def __init__(self, classifier, predictor):
         self.classifier = classifier
@@ -24,8 +24,9 @@ class PPP:
         predictions = self.classifier.predict_proba(X_train_perturbed)
         self.meta_features.append(self.compute_ppp_features(predictions))
         self.meta_scores.append(self.classifier.score(X_train_perturbed, y_train))
-
         self.meta_features = [np.insert(self.meta_features[0], 0, hyperparameter)]
+
+        print('PPP Score', self.meta_scores)
 
         self.predictor.fit(self.meta_features, self.meta_scores)
 
@@ -35,10 +36,4 @@ class PPP:
 
         meta_features = [np.insert(meta_features, 0, hyperparameter)]
 
-        temp = self.predictor.predict(meta_features, return_std=True)
-
-        dict = {'mu' : temp[0],
-                'sigma' : temp[1]
-                }
-
-        return dict
+        return self.predictor.predict(meta_features, return_std=True)
