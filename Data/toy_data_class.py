@@ -6,9 +6,11 @@ from sklearn.datasets import make_circles
 from sklearn.datasets import make_moons
 from sklearn.model_selection import train_test_split
 
+import pickle
+
 class toy_data_class:
 
-    def __init__(self, samples=10000, classes=2, features=2, test_size=0.2):
+    def __init__(self, samples=100000, classes=2, features=2, test_size=0.2):
         self.samples = samples
         self.classes = classes
         self.features = features
@@ -26,7 +28,7 @@ class toy_data_class:
 
     def blobs(self):
         self.X, self.y = make_blobs(n_samples=self.samples, centers=self.classes, n_features=self.features,
-                          random_state=42)
+                          random_state=25)
 
 
     def plot_data(self):
@@ -43,7 +45,21 @@ class toy_data_class:
             self.plot_data()
         return self.get_train_test()
 
+    def save(self,X_train, X_test, y_train, y_test, random):
+        pickle.dump(X_train, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_train.pickle', 'wb'))
+        pickle.dump(X_test, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_test.pickle', 'wb'))
+        pickle.dump(y_train, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_train.pickle', 'wb'))
+        pickle.dump(y_test, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_test.pickle', 'wb'))
+
+    def load(self, random):
+        X_train = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_train.pickle', 'rb'))
+        X_test = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_test.pickle', 'rb'))
+        y_train = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_train.pickle', 'rb'))
+        y_test = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_test.pickle', 'rb'))
+
+        return X_train, X_test, y_train, y_test
 
 
 #t = toy_data_class()
-#X_train, X_test, y_train, y_test = t(t.blobs())
+#X_train, X_test, y_train, y_test = t(t.blobs(), True)
+#t.save(X_train, X_test, y_train, y_test, 42)
