@@ -3,11 +3,17 @@ import numpy as np
 from Data.read_heart import heart
 from Pertubations.numeric import Column, Scale
 import sys
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
 
 class PPP_class:
 
-    def __init__(self, classifier, predictor):
+    def __init__(self, classifier=None, predictor=None):
         self.classifier = classifier
+        if predictor == None:
+            # Predictor
+            kernel = 1.0 * RBF(1.0)
+            predictor = GaussianProcessRegressor(kernel=kernel)
         self.predictor = predictor
 
     # Computes Quantiles for predict proba.
@@ -32,8 +38,8 @@ class PPP_class:
 
     def predict_ppp(self, X_perturbed, hyperparameter):
         predictions = self.classifier.predict_proba(X_perturbed)
-        meta_features = self.compute_ppp_features(predictions)
+        self.meta_features = (self.compute_ppp_features(predictions))
 
-        meta_features = [np.insert(meta_features, 0, hyperparameter)]
+        self.meta_features = [np.insert(self.meta_features, 0, hyperparameter)]
 
-        return self.predictor.predict(meta_features, return_std=True)
+        return self.predictor.predict(self.meta_features, return_std=True)

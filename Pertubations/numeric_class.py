@@ -11,6 +11,7 @@ class Column(Pertubation_class):
         self.fraction = fraction
 
     def perturbe(self):
+        random.seed(0)
         if self.categorical_column != None:
             temp_list = self.numerical_column + self.categorical_column
         temp_list = self.numerical_column
@@ -43,6 +44,7 @@ class Scale(Pertubation_class):
         self.fraction = fraction
 
     def perturbe(self):
+        random.seed(0)
         self.num_column = random.choice(self.numerical_column)
 
         for i in range(len(self.X_train_copy)):

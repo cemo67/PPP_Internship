@@ -5,53 +5,42 @@ from PPP_class import PPP_class
 import sys
 from Data.read_heart import heart
 
-DEFAULT_PATH = 'models/'
-models = []
-predictor = pickle.load(open(DEFAULT_PATH + 'predictor.pickle', 'rb'))
+SAVE = True
+MODEL_PATH = 'models/'
+predictor = pickle.load(open(MODEL_PATH + 'predictor.pickle', 'rb'))
+ppp = PPP_class(None, predictor)
 
-# Read Heart data
-data = heart()
-X_train, X_test, y_train, y_test = data.get_train_test()
+# Toy data
+data = toy_data_class()
+X_train, X_test, y_train, y_test = data.load()
 
-for folder in os.listdir(DEFAULT_PATH):
+if SAVE:
+    # Write CSV
+    file_information = open(MODEL_PATH + 'PPP_test.csv', 'w')
+    file_information.write('Pertubation;Output_Score;MU;Sigma;Meta_features\n')
+
+for folder in os.listdir(MODEL_PATH):
     print(folder)
-    PATH_TEMP = os.path.join(DEFAULT_PATH, folder)
+    PATH_TEMP = os.path.join(MODEL_PATH, folder)
 
     if os.path.isdir(PATH_TEMP):
         models = (pickle.load(open(PATH_TEMP + '/classifier.pickle', 'rb')))
 
-    best_hyperparameter = []
-    for keys in models.best_params_.keys():
-        best_hyperparameter.append(models.best_params_[keys])
+        best_hyperparameter = []
+        for keys in models.best_params_.keys():
+            best_hyperparameter.append(models.best_params_[keys])
 
-    ppp = PPP_class(models, predictor)
+        ppp.classifier = models
 
-    mu, sigma = ppp.predict_ppp(X_train, best_hyperparameter)
+        mu, sigma = ppp.predict_ppp(X_train, best_hyperparameter)
 
-    print('Model Score: ', models.score(X_train, y_train))
-    print('Predictor Score: ', mu, sigma)
+        meta_scores = models.score(X_train, y_train)
 
-toy_data = toy_data_class()
-X_train, X_test, y_train, y_test = toy_data(toy_data.blobs())
+        #print('Model Score: ', models.score(X_train, y_train))
+        #print('Predictor Score: ', mu, sigma)
+        #print(ppp.meta_features)
+        if SAVE:
+            file_information.write(str(folder) + ';' + str(meta_scores) + ';' + str(mu) + ';' + str(sigma) + ';' + str(ppp.meta_features) + '\n')
 
-
-
-
-
-
-sys.exit()
-
-for classifier in models:
-
-
-
-    best_hyperparameter = []
-    for keys in classifier.best_params_.keys():
-        best_hyperparameter.append(classifier.best_params_[keys])
-
-    ppp = PPP_class(classifier, predictor)
-
-    mu, sigma = ppp.predict_ppp(X_train, best_hyperparameter)
-
-    print('Model Score: ', classifier.score(X_train, y_train))
-    print('Predictor Score: ', mu, sigma)
+if SAVE:
+    file_information.close()

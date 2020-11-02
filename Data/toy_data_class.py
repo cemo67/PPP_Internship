@@ -10,12 +10,14 @@ import pickle
 
 class toy_data_class:
 
-    def __init__(self, samples=100000, classes=2, features=2, test_size=0.2):
+    def __init__(self, samples=100000, classes=2, features=2, test_size=0.2, random_seed=0):
         self.samples = samples
         self.classes = classes
         self.features = features
         self.test_size = test_size
         self.numerical_column = [0, 1]
+        self.categorical_column = None
+        self.random=random_seed
 
     def moons(self):
         self.X, self.y = make_moons(n_samples=self.samples)
@@ -45,21 +47,21 @@ class toy_data_class:
             self.plot_data()
         return self.get_train_test()
 
-    def save(self,X_train, X_test, y_train, y_test, random):
-        pickle.dump(X_train, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_train.pickle', 'wb'))
-        pickle.dump(X_test, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_test.pickle', 'wb'))
-        pickle.dump(y_train, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_train.pickle', 'wb'))
-        pickle.dump(y_test, open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_test.pickle', 'wb'))
+    def save(self,X_train, X_test, y_train, y_test):
+        pickle.dump(X_train, open('toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_X_train.pickle', 'wb'))
+        pickle.dump(X_test, open('toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_X_test.pickle', 'wb'))
+        pickle.dump(y_train, open('toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_y_train.pickle', 'wb'))
+        pickle.dump(y_test, open('toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_y_test.pickle', 'wb'))
 
-    def load(self, random):
-        X_train = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_train.pickle', 'rb'))
-        X_test = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_X_test.pickle', 'rb'))
-        y_train = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_train.pickle', 'rb'))
-        y_test = pickle.load(open('toy_data_blobs_random_state_'+ str(random) +'_feature_2_classes_2_y_test.pickle', 'rb'))
+    def load(self):
+        X_train = pickle.load(open('Data/toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_X_train.pickle', 'rb'))
+        X_test = pickle.load(open('Data/toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_X_test.pickle', 'rb'))
+        y_train = pickle.load(open('Data/toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_y_train.pickle', 'rb'))
+        y_test = pickle.load(open('Data/toy_data_blobs_random_state_'+ str(self.random) +'_feature_2_classes_2_y_test.pickle', 'rb'))
 
         return X_train, X_test, y_train, y_test
 
 
 #t = toy_data_class()
 #X_train, X_test, y_train, y_test = t(t.blobs(), True)
-#t.save(X_train, X_test, y_train, y_test, 42)
+#t.save(X_train, X_test, y_train, y_test)
