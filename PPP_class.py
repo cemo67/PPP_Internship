@@ -1,8 +1,5 @@
 import numpy as np
 
-from Data.read_heart import heart
-from Pertubations.numeric import Column, Scale
-import sys
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF
 
