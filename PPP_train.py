@@ -10,7 +10,7 @@ data = toy_data_class()
 X_train, X_test, y_train, y_test = data.load()
 
 # Config
-SAVE = True
+SAVE = False
 MODEL_PATH = 'models/'
 k_range = 3
 

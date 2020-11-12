@@ -65,6 +65,6 @@ class toy_data_class:
         return X_train, X_test, y_train, y_test
 
 
-t = toy_data_class()
-X_train, X_test, y_train, y_test = t(t.blobs(), True)
+#t = toy_data_class()
+#X_train, X_test, y_train, y_test = t(t.blobs(), True)
 #t.save()
