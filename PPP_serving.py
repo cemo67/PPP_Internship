@@ -24,9 +24,6 @@ for folder in os.listdir(MODEL_PATH):
 
         real_meta_score = classifier.score(X_train, y_train)
 
-        #print('Model Score: ', models.score(X_train, y_train))
-        #print('Predictor Score: ', mu, sigma)
-        #print(ppp.meta_features)
         if SAVE:
             file_information = open(MODEL_PATH_TEMP + '/PPP_test.csv', 'w')
             file_information.write('Pertubation;Output_Score;MU;Sigma;Meta_features\n')
