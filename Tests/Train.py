@@ -1,10 +1,11 @@
+import sys
+sys.path.append("../")
 from Data.toy_data_class import toy_data_class
 from Pertubations.Pertubation_List import get_pertubation_list, get_file_list
 from PPP_class import PPP_class
 from sklearn.neighbors import KNeighborsClassifier
 import os
 import pickle
-import sys
 
 # Config
 SAVE = True
