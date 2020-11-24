@@ -11,7 +11,7 @@ import pickle
 class toy_data_class:
 
     # cluster_std = The standard deviation of the clusters.
-    def __init__(self, samples=1000, classes=2, features=2, test_size=0.2, random_seed=0, cluster_std=1, center_box=[-10, 10]):
+    def __init__(self, samples=1000, name='blobs' ,classes=2, features=2, test_size=0.2, random_seed=0, cluster_std=1, center_box=[-10, 10]):
         self.samples = samples
         self.classes = classes
         self.features = features
@@ -21,17 +21,22 @@ class toy_data_class:
         self.random=random_seed
         self.cluster_std = cluster_std
         self.center_box = center_box
+        self.name = name
 
     def moons(self):
+        self.name = 'moons'
         self.X, self.y = make_moons(n_samples=self.samples, random_state=self.random)
 
     def circles(self):
+        self.name = 'circles'
         self.X, self.y = make_circles(n_samples=self.samples, random_state=self.random)
 
     def s_curve(self):
+        self.name = 's_curve'
         self.X, self.y = make_s_curve(n_samples=self.samples, random_state=self.random)
 
     def blobs(self):
+        self.name = 'blobs'
         self.X, self.y = make_blobs(n_samples=self.samples, centers=self.classes, n_features=self.features,
                           random_state=self.random, cluster_std=self.cluster_std, center_box=self.center_box)
 
@@ -51,16 +56,23 @@ class toy_data_class:
         return self.get_train_test()
 
     def save(self):
-        pickle.dump(self.X, open('blobs_random_state_'+ str(self.random) + '_X.pickle', 'wb'))
-        pickle.dump(self.y, open('blobs_random_state_'+ str(self.random) + '_y.pickle', 'wb'))
+        pickle.dump(self.X, open(str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'wb' ))
+        pickle.dump(self.y, open(str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'wb'))
 
+    def load(self):
 
-    def load(self, name):
-        self.X = pickle.load(open('../Data/'+ str(name) + '_random_state_'+ str(self.random) + '_X.pickle', 'rb'))
-        self.y = pickle.load(open('../Data/'+ str(name) + '_random_state_'+ str(self.random) + '_y.pickle', 'rb'))
+        import os
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+
+        self.X = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'rb'))
+        self.y = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'rb'))
 
         return self.get_train_test()
 
-#t = toy_data_class()
+
+#t = toy_data_class(samples=1000, name = 'blobs')
 #t.blobs()
 #t.save()
+#t.plot_data()
+#t.load()
+#t.plot_data()
