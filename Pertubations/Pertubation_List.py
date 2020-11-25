@@ -14,5 +14,13 @@ def get_pertubation_list(X, data):
 
     return PERTUBATION_LIST
 
-def get_file_list():
-    return ['blobs', 'moons']
+def get_config():
+    file_list = ['blobs']
+    k_range = 10
+    samples = 100
+
+    dict = { 'file_list': file_list,
+             'k_range': k_range,
+             'samples': samples}
+
+    return dict
