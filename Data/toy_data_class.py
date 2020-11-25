@@ -29,7 +29,7 @@ class toy_data_class:
 
     def circles(self):
         self.name = 'circles'
-        self.X, self.y = make_circles(n_samples=self.samples, random_state=self.random)
+        self.X, self.y = make_circles(n_samps=self.samples, random_state=self.random)
 
     def s_curve(self):
         self.name = 's_curve'
@@ -70,7 +70,7 @@ class toy_data_class:
         return self.get_train_test()
 
 
-#t = toy_data_class(samples=1000, name = 'blobs')
+#t = toy_data_class(samples=100, name = 'blobs')
 #t.blobs()
 #t.save()
 #t.plot_data()
