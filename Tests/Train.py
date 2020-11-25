@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 from Data.toy_data_class import toy_data_class
 from Pertubations.Pertubation_List import get_pertubation_list, get_config
 from PPP_class import PPP_class

@@ -1,3 +1,5 @@
+import sys
+sys.path.append("../")
 import os
 import pickle
 from Data.toy_data_class import toy_data_class
