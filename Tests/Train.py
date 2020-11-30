@@ -15,43 +15,41 @@ k_range = config_dict['k_range']
 samples_ = config_dict['samples']
 
 for Data_name in DATA_NAME_LIST:
-    print(Data_name)
-    print()
 
-    data = toy_data_class(samples=samples_, name = Data_name)
-    X_train, X_test, y_train, y_test = data.load()
+    for sample in samples_:
+        print(Data_name, sample)
 
-    PERTUBATION_LIST = get_pertubation_list(X_train, data)
+        data = toy_data_class(samples=sample, name = Data_name)
+        X_train, X_test, y_train, y_test = data.load()
 
-    MODEL_PATH = '../models/' + str(Data_name) + '/'
+        PERTUBATION_LIST = get_pertubation_list(X_train, data)
 
-    for hp_1 in range(1, k_range + 1):
-        print('K=',hp_1)
-        print()
+        MODEL_PATH = '../models/' + str(Data_name) + '_' + str(sample) + '/'
 
-        # Classifier
-        classifier = KNeighborsClassifier(n_neighbors=hp_1)
-        classifier.fit(X_train, y_train)
+        for hp_1 in range(1, k_range + 1):
+            # Classifier
+            classifier = KNeighborsClassifier(n_neighbors=hp_1)
+            classifier.fit(X_train, y_train)
 
-        # Predictor
-        ppp = PPP_class(classifier=classifier)
+            # Predictor
+            ppp = PPP_class(classifier=classifier)
 
-        # Save Folder
-        MODEL_PATH_TEMP = MODEL_PATH + str(hp_1) + '/'
-        os.makedirs(MODEL_PATH_TEMP)
+            # Save Folder
+            MODEL_PATH_TEMP = MODEL_PATH + str(hp_1) + '/'
+            os.makedirs(MODEL_PATH_TEMP)
 
-        # Write CSV
-        file_information = open(MODEL_PATH_TEMP + 'PPP_train.csv', 'w')
-        file_information.write('Pertubation;Output_Score\n')
+            # Write CSV
+            file_information = open(MODEL_PATH_TEMP + 'PPP_train.csv', 'w')
+            file_information.write('Pertubation;Output_Score\n')
 
-        ppp.fit_ppp(y_train, PERTUBATION_LIST, file_information)
+            ppp.fit_ppp(y_train, PERTUBATION_LIST, file_information)
 
-        # Classifier
-        pickle.dump(ppp.classifier, open(MODEL_PATH_TEMP + 'classifier.pickle', 'wb'))
+            # Classifier
+            pickle.dump(ppp.classifier, open(MODEL_PATH_TEMP + 'classifier.pickle', 'wb'))
 
-        # Predictor
-        pickle.dump(ppp.predictor, open(MODEL_PATH_TEMP + 'predictor.pickle', 'wb'))
+            # Predictor
+            pickle.dump(ppp.predictor, open(MODEL_PATH_TEMP + 'predictor.pickle', 'wb'))
 
-        file_information.close()
+            file_information.close()
 
 print('DONE!')

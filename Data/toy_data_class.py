@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 from sklearn.datasets import make_blobs
 from sklearn.datasets import make_s_curve
@@ -29,7 +30,7 @@ class toy_data_class:
 
     def circles(self):
         self.name = 'circles'
-        self.X, self.y = make_circles(n_samps=self.samples, random_state=self.random)
+        self.X, self.y = make_circles(n_samples=self.samples, random_state=self.random)
 
     def s_curve(self):
         self.name = 's_curve'
@@ -40,14 +41,23 @@ class toy_data_class:
         self.X, self.y = make_blobs(n_samples=self.samples, centers=self.classes, n_features=self.features,
                           random_state=self.random, cluster_std=self.cluster_std, center_box=self.center_box)
 
+    def cosine(self, noise=0):
+        x = np.linspace(-np.pi, 2 * np.pi, self.samples // 2)
+        x_1 = np.cos(x) + 1 + np.random.randn(self.samples // 2) * noise
+        x_2 = np.cos(x) - 1 + np.random.randn(self.samples // 2) * noise
+        self.X = np.vstack([np.hstack([x, x]), np.hstack([x_1, x_2])]).T
+        self.y = np.hstack([np.ones(self.samples // 2), np.zeros(self.samples // 2)])
 
     def plot_data(self):
         plt.scatter(self.X[:, 0], self.X[:, 1], marker='o', c=self.y,
                     s=25, edgecolor='k')
         plt.show()
 
-    def get_train_test(self):
-        return train_test_split(self.X, self.y, test_size=self.test_size, shuffle=False)
+    def get_train_test(self, bool_cosine):
+        if bool_cosine:
+            train_test_split(self.X, self.y, test_size=self.test_size, shuffle=True)
+        else:
+            return train_test_split(self.X, self.y, test_size=self.test_size, shuffle=False)
 
     def __call__(self, name, plot = False):
         name
@@ -56,7 +66,7 @@ class toy_data_class:
         return self.get_train_test()
 
     def save(self):
-        pickle.dump(self.X, open(str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'wb' ))
+        pickle.dump(self.X, open(str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'wb'))
         pickle.dump(self.y, open(str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'wb'))
 
     def load(self):
@@ -67,12 +77,7 @@ class toy_data_class:
         self.X = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'rb'))
         self.y = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'rb'))
 
-        return self.get_train_test()
-
-
-#t = toy_data_class(samples=100, name = 'blobs')
-#t.blobs()
-#t.save()
-#t.plot_data()
-#t.load()
-#t.plot_data()
+        if self.name == 'cosine':
+            return self.get_train_test(True)
+        else:
+            return self.get_train_test(False)
