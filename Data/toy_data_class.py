@@ -66,16 +66,12 @@ class toy_data_class:
         return self.get_train_test()
 
     def save(self):
-        pickle.dump(self.X, open(str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'wb'))
-        pickle.dump(self.y, open(str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'wb'))
+        pickle.dump(self.X, open('Data/' + str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'wb'))
+        pickle.dump(self.y, open('Data/' + str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'wb'))
 
     def load(self):
-
-        import os
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-
-        self.X = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'rb'))
-        self.y = pickle.load(open( dir_path + '/' + str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'rb'))
+        self.X = pickle.load(open('Data/' + str(self.name) + '_samples_' + str(self.samples) + '_X.pickle', 'rb'))
+        self.y = pickle.load(open('Data/' + str(self.name) + '_samples_' + str(self.samples) + '_y.pickle', 'rb'))
 
         if self.name == 'cosine':
             return self.get_train_test(True)

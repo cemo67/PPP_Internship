@@ -42,12 +42,23 @@ class PPP_plots:
         plt.scatter(self.X_test_perturbed[:, 0], self.X_test_perturbed[:, 1], c=self.y_test, s=30, edgecolors='b', marker='^')
         plt.title('K = ' + str(index))
         plot_name = self.path + str(index) + '.png'
-        print(plot_name)
         plt.savefig(plot_name)
         plt.clf()
 
     def save_and_clear(self):
         plot_name = self.path + '.png'
-        print(plot_name)
+        plt.savefig(plot_name)
+        plt.clf()
+
+    def plot_real_gp(self, list_real_score, list_gp_score):
+        plot_list_real_score = [elem[1] for elem in list_real_score]
+        plot_list_gp_score = [elem[1] for elem in list_gp_score]
+
+        plt.plot(plot_list_real_score, label='REAL')
+        plt.plot(plot_list_gp_score, label='GP')
+
+        plt.legend()
+
+        plot_name = self.path + 'line.png'
         plt.savefig(plot_name)
         plt.clf()
